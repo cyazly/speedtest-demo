@@ -1,0 +1,65 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: speedtestv2
+spec:
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: speedtestv2
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: speedtestv2
+  template:
+    metadata:
+      labels:
+        app: speedtestv2
+    spec:
+      containers:
+      - image: chary121/openspeedtest
+        name: speedtestv2
+        imagePullPolicy: "Always"
+        ports:
+        - containerPort: 3000
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: speedtestv2
+  name: speedtestv2
+spec:
+  ports:
+  - port: 80
+    protocol: TCP
+    targetPort: 3000
+  selector:
+    app: speedtestv2
+  sessionAffinity: None
+  type: ClusterIP
+
+---
+
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: speedtestv2
+spec:
+  ingressClassName: nginx
+  rules:
+  - host: demo1.belet.me
+    http:
+      paths:
+      - path: /
+        pathType: ImplementationSpecific
+        backend:
+          service:
+            name: speedtestv2
+            port:
+              number: 80
