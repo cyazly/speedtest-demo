@@ -9,7 +9,7 @@ kind: Deployment
 metadata:
   name: speedtestv2
 spec:
-  replicas: 16
+  replicas: 3
   selector:
     matchLabels:
       app: speedtestv2
